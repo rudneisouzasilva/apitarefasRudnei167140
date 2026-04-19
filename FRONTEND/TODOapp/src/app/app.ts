@@ -15,7 +15,7 @@ export class App {
  apiURL : string;
 
  constructor(private http: HttpClient) {
- this.apiURL = 'http://localhost:3000';
+ this.apiURL = 'https://apitarefasrudnei167140.onrender.com';
  this.READ_tarefas();
  }
 
