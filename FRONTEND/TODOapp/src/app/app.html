@@ -1,11 +1,100 @@
 <div class="main">
- <h1>Rudnei Souza 167140</h1>
- <input class="lg-text-input" #campoNovoItem (keyup.enter)="CREATE_tarefa(campoNovoItem.value); campoNovoItem.value = ''" />
- <button class="btn-primary" (click)="CREATE_tarefa(campoNovoItem.value); campoNovoItem.value = ''">
- Adicionar Tarefa</button>
- <ul>
- <li *ngFor="let tarefaDoLoop of arrayDeTarefas()">
- <app-item [tarefa]="tarefaDoLoop" (removeTarefa)="DELETE_tarefa(tarefaDoLoop)" (modificaTarefa)="UPDATE_tarefa(tarefaDoLoop)"></app-item>
- </li>
- </ul>
+  <h1>Rudnei 167140</h1>
+
+  <div *ngIf="!usuarioLogado()">
+    <input #username placeholder="nome" class="lg-text-input" />
+    <br>
+
+    <input #password placeholder="senha" type="password" class="lg-text-input" />
+    <br>
+
+    <button class="btn-primary" (click)="login(username.value, password.value)">
+      Login
+    </button>
+  </div>
+
+  <div *ngIf="usuarioLogado() && tipoUsuario() === 'USUARIO'">
+    <h2>Área de Tarefas</h2>
+
+    <input class="lg-text-input" #campoNovoItem />
+
+    <button
+      class="btn-primary"
+      (click)="CREATE_tarefa(campoNovoItem.value); campoNovoItem.value = ''">
+      Adicionar Tarefa
+    </button>
+
+    <ul>
+      <li *ngFor="let tarefaDoLoop of arrayDeTarefas()">
+        <app-item
+          [tarefa]="tarefaDoLoop"
+          (removeTarefa)="DELETE_tarefa(tarefaDoLoop)"
+          (modificaTarefa)="UPDATE_tarefa(tarefaDoLoop)">
+        </app-item>
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="usuarioLogado() && tipoUsuario() === 'ADM'">
+    <h2>Área Administrativa</h2>
+    <h3>Gerenciamento de Usuários</h3>
+
+    <input #campoNovoUsuario placeholder="nome" class="lg-text-input" />
+    <br>
+
+    <input #campoNovaSenha placeholder="senha" type="password" class="lg-text-input" />
+    <br>
+
+    <select #campoTipoUsuario class="lg-text-input">
+      <option value="USUARIO">USUARIO</option>
+      <option value="ADM">ADM</option>
+    </select>
+    <br>
+
+    <button
+      class="btn-primary"
+      (click)="CREATE_usuario(campoNovoUsuario.value, campoNovaSenha.value, campoTipoUsuario.value); campoNovoUsuario.value = ''; campoNovaSenha.value = ''">
+      Adicionar Usuário
+    </button>
+
+    <table class="tabela-usuarios">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Senha</th>
+          <th>Tipo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let usuarioDoLoop of arrayDeUsuarios()">
+          <td>
+            <input [(ngModel)]="usuarioDoLoop.nome" />
+          </td>
+
+          <td>
+            <input [(ngModel)]="usuarioDoLoop.senha" />
+          </td>
+
+          <td>
+            <select [(ngModel)]="usuarioDoLoop.tipo">
+              <option value="USUARIO">USUARIO</option>
+              <option value="ADM">ADM</option>
+            </select>
+          </td>
+
+          <td>
+            <button (click)="UPDATE_usuario(usuarioDoLoop)">
+              Alterar
+            </button>
+
+            <button (click)="DELETE_usuario(usuarioDoLoop)">
+              Remover
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
