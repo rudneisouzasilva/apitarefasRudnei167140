@@ -5,6 +5,12 @@ const modeloTarefa = require('../models/tarefa');
 const userModel = require('../models/user');
 var { createHash, randomBytes } = require('crypto');
 
+// Segredo usado para assinar os tokens JWT (defina JWT_SECRET no ambiente)
+const JWT_SECRET = process.env.JWT_SECRET || 'segredo';
+if (!process.env.JWT_SECRET) {
+  console.warn('JWT_SECRET não definido, usando o segredo padrão de desenvolvimento');
+}
+
 // Funções Auxiliares para Criptografia
 function gerarSalt() {
   return randomBytes(16).toString('hex');
@@ -30,7 +36,7 @@ function verificaJWT(req, res, next) {
     });
   }
 
-  jwt.verify(token, 'segredo', function (err, decoded) {
+  jwt.verify(token, JWT_SECRET, function (err, decoded) {
     if (err) {
       return res.status(500).json({
         auth: false,
@@ -51,7 +57,7 @@ router.post('/login', async (req, res) => {
     }
 
     if (validPassword(req.body.senha, user.hash, user.salt)) {
-      const token = jwt.sign({ id: user._id }, 'segredo', { expiresIn: '1h' });
+      const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
       return res.status(200).json({ auth: true, token: token, tipo: user.tipo });
     } else {
       return res.status(401).json({ auth: false, message: 'Senha invalida' });
